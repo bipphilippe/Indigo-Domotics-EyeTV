@@ -6,10 +6,17 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXFileReference section */
+		E72F51201ACC7402007883CE /* EyeTV.indigoPlugin */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = EyeTV.indigoPlugin; sourceTree = "<group>"; };
+		E72F51211ACC7402007883CE /* README.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
 /* Begin PBXGroup section */
 		E72F51191ACC73F4007883CE = {
 			isa = PBXGroup;
 			children = (
+				E72F51201ACC7402007883CE /* EyeTV.indigoPlugin */,
+				E72F51211ACC7402007883CE /* README.txt */,
 			);
 			sourceTree = "<group>";
 		};

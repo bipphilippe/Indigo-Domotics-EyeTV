@@ -1,0 +1,273 @@
+<?xml version="1.0"?>
+<Devices>
+    <Device type="custom" id="bip.etv.turbohdapp">
+        <Name>TurboHD.264 Application</Name>
+        <ConfigUI>
+            <Field id="ApplicationID" type="textfield" readonly="True" defaultValue="Turbo.264 HD.app">
+                <Label>Application name:</Label>
+                <Description>(this is for information)</Description>
+            </Field>
+        </ConfigUI>
+        <States>
+            <State id="Status">
+                <ValueType>
+                    <List>
+                        <Option value="recording">Encoding</Option>
+                        <Option value="stopped">Stopped</Option>
+                        <Option value="unavailable">Unavailable</Option>
+                        <Option value="error">Error</Option>
+                    </List>
+                </ValueType>
+                <TriggerLabel>Encoder Status Changed</TriggerLabel>
+                <TriggerLabelPrefix>Encoder Status is</TriggerLabelPrefix>
+                <ControlPageLabel>Encoder Player Status</ControlPageLabel>
+                <ControlPageLabelPrefix>Encoder Status is</ControlPageLabelPrefix>
+            </State>
+            <State id="isEncoding">
+                <ValueType>Boolean</ValueType>
+                <TriggerLabel>Encoding</TriggerLabel>
+                <ControlPageLabel>Encoding</ControlPageLabel>
+            </State>
+            <State id="lastError">
+                <ValueType>Number</ValueType>
+                <TriggerLabel>Last error code</TriggerLabel>
+                <ControlPageLabel>Last error code</ControlPageLabel>
+            </State>
+            <State id="isTurboHardwareIn">
+                <ValueType>Boolean</ValueType>
+                <TriggerLabel>Turbo hardware plugged in</TriggerLabel>
+                <ControlPageLabel>Turbo hardware plugged in</ControlPageLabel>
+            </State>
+        </States>
+        <UiDisplayStateId>Status</UiDisplayStateId>
+    </Device>
+    <Device type="custom" id="bip.etv.eyetvapp">
+        <Name>EyeTV Application</Name>
+        <ConfigUI>
+            <Field id="TimerDevice" type="textfield" readonly="True">
+                <Label>Timer id for next record start:</Label>
+                <Description>(this is for information)</Description>
+            </Field>
+            <Field id="ApplicationID" type="textfield" readonly="True" defaultValue="EyeTV.app">
+                <Label>Application name:</Label>
+                <Description>(this is for information)</Description>
+            </Field>
+        </ConfigUI>
+        <States>
+            <State id="Status">
+                <ValueType>
+                    <List>
+                        <Option value="playing">Playing</Option>
+                        <Option value="recording">Recording</Option>
+                        <Option value="paused">Paused</Option>
+                        <Option value="stopped">Stopped</Option>
+                        <Option value="unavailable">Unavailable</Option>
+                        <Option value="error">Error</Option>
+                    </List>
+                </ValueType>
+                <TriggerLabel>EyeTV Status Changed</TriggerLabel>
+                <TriggerLabelPrefix>EyeTV Status is</TriggerLabelPrefix>
+                <ControlPageLabel>Current EyeTV Status</ControlPageLabel>
+                <ControlPageLabelPrefix>EyeTV Status is</ControlPageLabelPrefix>
+            </State>
+             <State id="AlertMenu">
+                <ValueType>Boolean</ValueType>
+                <TriggerLabel>Alert menu open</TriggerLabel>
+                <ControlPageLabel>Alert menu open</ControlPageLabel>
+            </State>
+            <State id="CurrentChannel">
+                <ValueType>String</ValueType>
+                <TriggerLabel>Current channel name</TriggerLabel>
+                <ControlPageLabel>Current channel name</ControlPageLabel>
+            </State>
+           <State id="isTurboHardwareIn">
+                <ValueType>Boolean</ValueType>
+                <TriggerLabel>Turbo hardware plugged in</TriggerLabel>
+                <ControlPageLabel>Turbo hardware plugged in</ControlPageLabel>
+            </State>
+            <State id="isBusy">
+                <ValueType>Boolean</ValueType>
+                <TriggerLabel>Busy</TriggerLabel>
+                <ControlPageLabel>Busy</ControlPageLabel>
+            </State>
+            <State id="isCompacting">
+                <ValueType>Boolean</ValueType>
+                <TriggerLabel>Compacting</TriggerLabel>
+                <ControlPageLabel>Compacting</ControlPageLabel>
+            </State>
+            <State id="isExporting">
+                <ValueType>Boolean</ValueType>
+                <TriggerLabel>Exporting</TriggerLabel>
+                <ControlPageLabel>Exporting</ControlPageLabel>
+            </State>
+            <State id="isRecording">
+                <ValueType>Boolean</ValueType>
+                <TriggerLabel>Recording</TriggerLabel>
+                <ControlPageLabel>Recording</ControlPageLabel>
+            </State>
+            <State id="isSavingClip">
+                <ValueType>Boolean</ValueType>
+                <TriggerLabel>Saving clip as recording</TriggerLabel>
+                <ControlPageLabel>Saving clip as recording</ControlPageLabel>
+            </State>
+            <State id="isPlaying">
+                <ValueType>Boolean</ValueType>
+                <TriggerLabel>Playing</TriggerLabel>
+                <ControlPageLabel>Playing</ControlPageLabel>
+            </State>
+            <State id="PlaybackVolume">
+                <ValueType>Number</ValueType>
+                <TriggerLabel>Playback volume</TriggerLabel>
+                <ControlPageLabel>Playback volume</ControlPageLabel>
+            </State>
+            <State id="isMutedVolume">
+                <ValueType>Boolean</ValueType>
+                <TriggerLabel>Volume muted</TriggerLabel>
+                <ControlPageLabel>Volume muted</ControlPageLabel>
+            </State>
+            <State id="isServerMode">
+                <ValueType>Boolean</ValueType>
+                <TriggerLabel>Server mode</TriggerLabel>
+                <ControlPageLabel>Server mode</ControlPageLabel>
+            </State>
+            <State id="PostpadTime">
+                <ValueType>Integer</ValueType>
+                <TriggerLabel>Postpad time</TriggerLabel>
+                <ControlPageLabel>Postpad time</ControlPageLabel>
+            </State>
+            <State id="PrepadTime">
+                <ValueType>Integer</ValueType>
+                <TriggerLabel>Postpad time</TriggerLabel>
+                <ControlPageLabel>Prepad time</ControlPageLabel>
+            </State>
+            <State id="Sep1">
+                <ValueType>Separator</ValueType>
+            </State>
+            <State id="UniqueID">
+                <ValueType>String</ValueType>
+                <TriggerLabel>Unique ID</TriggerLabel>
+                <ControlPageLabel>Unique ID</ControlPageLabel>
+            </State>
+            <State id="ChannelName">
+                <ValueType>String</ValueType>
+                <TriggerLabel>Channel name</TriggerLabel>
+                <ControlPageLabel>Channel name</ControlPageLabel>
+            </State>
+            <State id="Duration">
+                <ValueType>String</ValueType>
+                <TriggerLabel>Duration</TriggerLabel>
+                <ControlPageLabel>Duration</ControlPageLabel>
+            </State>
+            <State id="StartTime">
+                <ValueType>String</ValueType>
+                <TriggerLabel>Start time</TriggerLabel>
+                <ControlPageLabel>Start time</ControlPageLabel>
+            </State>
+            <State id="StartTimestamp">
+                <ValueType>String</ValueType>
+                <TriggerLabel>Start timestamp</TriggerLabel>
+                <ControlPageLabel>Start timestamp</ControlPageLabel>
+            </State>
+            <State id="Title">
+                <ValueType>String</ValueType>
+                <TriggerLabel>Title</TriggerLabel>
+                <ControlPageLabel>Title</ControlPageLabel>
+            </State>
+            <State id="Episode">
+                <ValueType>String</ValueType>
+                <TriggerLabel>Episode</TriggerLabel>
+                <ControlPageLabel>Episode</ControlPageLabel>
+            </State>
+        </States>
+        <UiDisplayStateId>Status</UiDisplayStateId>
+   </Device>
+    <!--Device type="custom" id="bip.etv.eyetvrecorder">
+        For future version
+        <Name>EyeTV Recorder</Name>
+        <States>
+            <State id="pStatus">
+                <ValueType>
+                    <List>
+                        <Option value="playing">Recording</Option>
+                       <Option value="stopped">Stopped</Option>
+                        <Option value="off">Unavailable</Option>
+                        <Option value="error">Error</Option>
+                    </List>
+                </ValueType>
+                <TriggerLabel>Recorder Status Changed</TriggerLabel>
+                <TriggerLabelPrefix>Recorder Status is</TriggerLabelPrefix>
+                <ControlPageLabel>Current Recorder Status</ControlPageLabel>
+                <ControlPageLabelPrefix>Recorder Status is</ControlPageLabelPrefix>
+            </State>
+            <State id="UniqueID">
+                <ValueType>String</ValueType>
+                <TriggerLabel>Unique ID</TriggerLabel>
+                <ControlPageLabel>Unique ID</ControlPageLabel>
+            </State>
+            <State id="ChannelName">
+                <ValueType>String</ValueType>
+                <TriggerLabel>Channel name</TriggerLabel>
+                <ControlPageLabel>Channel name</ControlPageLabel>
+            </State>
+            <State id="Duration">
+                <ValueType>String</ValueType>
+                <TriggerLabel>Duration</TriggerLabel>
+                <ControlPageLabel>Duration</ControlPageLabel>
+            </State>
+            <State id="StartTimestamp">
+                <ValueType>Integer</ValueType>
+                <TriggerLabel>Start timestamp</TriggerLabel>
+                <ControlPageLabel>Start timestamp</ControlPageLabel>
+            </State>
+            <State id="StartTime">
+                <ValueType>String</ValueType>
+                <TriggerLabel>Start time</TriggerLabel>
+                <ControlPageLabel>Start time</ControlPageLabel>
+            </State>
+            <State id="Title">
+                <ValueType>String</ValueType>
+                <TriggerLabel>Title</TriggerLabel>
+                <ControlPageLabel>Title</ControlPageLabel>
+            </State>
+            <State id="Episode">
+                <ValueType>String</ValueType>
+                <TriggerLabel>Episode</TriggerLabel>
+                <ControlPageLabel>Episode</ControlPageLabel>
+            </State>
+            <State id="PostpadTime">
+                <ValueType>Integer</ValueType>
+                <TriggerLabel>Postpad time</TriggerLabel>
+                <ControlPageLabel>Postpad time</ControlPageLabel>
+            </State>
+            <State id="PrepadTime">
+                <ValueType>Integer</ValueType>
+                <TriggerLabel>Postpad time</TriggerLabel>
+                <ControlPageLabel>Prepad time</ControlPageLabel>
+            </State>
+            <State id="Enabled">
+                <ValueType>Boolean</ValueType>
+                <TriggerLabel>Enabled</TriggerLabel>
+                <ControlPageLabel>Enabled</ControlPageLabel>
+            </State>
+           <State id="Sep1">
+                <ValueType>Separator</ValueType>
+            </State>
+            <State id="ActualDuration">
+                <ValueType>Number</ValueType>
+                <TriggerLabel>Actual duration</TriggerLabel>
+                <ControlPageLabel>Actual duration</ControlPageLabel>
+            </State>
+            <State id="ActualStartTimestamp">
+                <ValueType>Number</ValueType>
+                <TriggerLabel>Actual start timestamp</TriggerLabel>
+                <ControlPageLabel>Actual start timestamp</ControlPageLabel>
+            </State>
+            <State id="ActualStart">
+                <ValueType>String</ValueType>
+                <TriggerLabel>Actual start time</TriggerLabel>
+                <ControlPageLabel>Actual start time</ControlPageLabel>
+            </State>
+        </States>
+        <UiDisplayStateId>Status</UiDisplayStateId>
+    </Device-->
+</Devices>
