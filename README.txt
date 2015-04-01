@@ -56,4 +56,4 @@ For EyeTV:
     - Episode : episode name or other informations (if not a TV sho)
 - manages a self-created an updated timer that reflects the remaining time before the next recording time (minus the prepad time). The name of the timer changes according the program. A tipical use of the timer if to wake up the EyeTV drive and application before a recording (using the Mac System plug-in)
    
-More on the indigo Forum : http://forums.indigodomo.com/viewtopic.php?f=162&t=13678
+More on the indigo Forum : http://forums.indigodomo.com/viewtopic.php?f=162&t=13759
