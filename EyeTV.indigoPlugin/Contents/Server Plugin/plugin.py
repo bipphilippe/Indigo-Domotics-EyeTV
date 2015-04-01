@@ -39,6 +39,8 @@ class Plugin(indigo.PluginBase):
     ########################################
     def __init__(self, pluginId, pluginDisplayName, pluginVersion, pluginPrefs):
         indigo.PluginBase.__init__(self, pluginId, pluginDisplayName, pluginVersion, pluginPrefs)
+        self.debugraw = False
+        self.debug = False
 
     def __del__(self):
         indigo.PluginBase.__del__(self)
@@ -101,7 +103,7 @@ class Plugin(indigo.PluginBase):
                     ##########
                     # TurboHD App
                     ########################
-                    if (thedevice.deviceTypeId =="bip.etv.turbohdapp"):
+                    if (thedevice.deviceTypeId =="bip.etv.turbohdapp") and thedevice.configured:
                         # TurboHD states
                         (success,thevaluesDict) = interface.getProcessData(thedevice, thevaluesDict)
                         if thevaluesDict.setdefault("Status","other") != "unavailable":
@@ -115,7 +117,7 @@ class Plugin(indigo.PluginBase):
                     ##########
                     # EyeTV App
                     ########################
-                    elif (thedevice.deviceTypeId =="bip.etv.eyetvapp"):
+                    elif (thedevice.deviceTypeId =="bip.etv.eyetvapp") and thedevice.configured:
                         # EyeTV states
                         (success,thevaluesDict) = interface.getProcessData(thedevice, thevaluesDict)
                         if thevaluesDict.setdefault("Status","other") != "unavailable":

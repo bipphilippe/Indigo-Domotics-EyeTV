@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <Devices>
     <Device type="custom" id="bip.etv.turbohdapp">
-        <Name>TurboHD.264 Application</Name>
+        <Name>Turbo.264 HD Application</Name>
         <ConfigUI>
             <Field id="ApplicationID" type="textfield" readonly="True" defaultValue="Turbo.264 HD.app">
                 <Label>Application name:</Label>
