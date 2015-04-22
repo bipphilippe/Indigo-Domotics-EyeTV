@@ -30,7 +30,7 @@ import indigo
 import core
 
 ########################################
-def initErrorHandling():
+def init():
     """ Initiate special applescript error handling
     """
     indigo.activePlugin._retryLog=dict()
@@ -39,14 +39,14 @@ def initErrorHandling():
 
 
 ########################################
-def run(ascript, akeys, errorHandling = None):
+def run(ascript, akeys =  None, errorHandling = None):
     """ Calls applescript script and returns the result as a python dictionnary
 
         Args:
             ascript: applescript as text
             akeys: list or keys, ordered the same way that output data of the applescript,
                    or None
-            errorHandling : Dictionnary of status,value to check to cancel error (checked on ConcurrentThread)
+            errorHandling : Dictionnary of status,value to check to cancel error (checked on ConcurrentThread) (not yet implemented)
                     or number of retry (integer)
                     or None if no special management
         Returns:
@@ -62,7 +62,7 @@ def run(ascript, akeys, errorHandling = None):
                            stdout=subprocess.PIPE,
                            stderr=subprocess.PIPE,
                            close_fds=True)
-    indigo.activePlugin.sleep(1)
+    indigo.activePlugin.sleep(0.25)
     (osavalues, osaerror) = osa.communicate()
 
     # error management

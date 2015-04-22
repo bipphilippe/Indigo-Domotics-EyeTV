@@ -18,10 +18,6 @@
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.#
-
-
-    History
-    Rev 1.0.0 :   initial version
 """
 ####################################################################################
 
@@ -36,7 +32,8 @@ from bipIndigoFramework import shellscript
 # our global name space by the host process.
 
 def init():
-    osascript.initErrorHandling()
+    osascript.init()
+    shellscript.init()
 
 ##########
 # Any App
@@ -51,7 +48,7 @@ def getProcessData(thedevice, thevaluesDict):
             success: True if success, False if not
             thevaluesDict updated with new data if success, equals to the input if not
     """
-    pslist = shellscript.run(u"ps -awx | grep '" + thedevice.pluginProps['ApplicationID'] + "/Contents/MacOS/" + thedevice.pluginProps['ApplicationID'][:-4]+ "$'",[(0,6)],['ProcessID'])
+    pslist = shellscript.run(u"ps -awxc -opid,comm | grep '%s$'" % (thedevice.pluginProps['ApplicationID'][:-4]),[(0,6)],['ProcessID'])
 
     if pslist['ProcessID']=='':
         thevaluesDict["Status"]="unavailable"
@@ -170,14 +167,16 @@ def getEyeTVNextProgramData(thedevice,thevaluesDict):
     theresult = osascript.run(u'''(* Find next program *)
         global theNextEyeTVProgramTime
         global theNextEyeTVProgram
+        global theTime
 
         on run
             with timeout of 2 seconds
                 tell application "EyeTV"
-                    set theNextEyeTVProgram to (item 1 of (programs where (start time > (current date)) and enabled = true))
+                    set theTime to (current date) + prepad time * 60 + 60
+                    set theNextEyeTVProgram to (item 1 of (programs where (start time > theTime) and enabled = true))
                     set theNextEyeTVProgramTime to start time of theNextEyeTVProgram
                 end tell
-                end timeout
+            end timeout
             loopme()
             set saveTID to AppleScript's text item delimiters
             set AppleScript's text item delimiters to {"||"}
@@ -188,7 +187,8 @@ def getEyeTVNextProgramData(thedevice,thevaluesDict):
                 (episode of theNextEyeTVProgram) as string, ¬
                 (name of (channels whose channel number = thechannel)) as text, ¬
                 (duration of theNextEyeTVProgram) as string, ¬
-                (start time of theNextEyeTVProgram) as string, my pydate(start time of theNextEyeTVProgram)} as text
+                (start time of theNextEyeTVProgram) as string, ¬
+                my pydate(start time of theNextEyeTVProgram)} as text
             end tell
             set AppleScript's text item delimiters to saveTID
             return toreturn
@@ -198,7 +198,7 @@ def getEyeTVNextProgramData(thedevice,thevaluesDict):
             with timeout of 2 seconds
                 tell application "EyeTV"
                     try
-                        set theNextEyeTVProgram to (item 1 of (programs where (start time > (current date)) and (start time < theNextEyeTVProgramTime) and enabled = true))
+                        set theNextEyeTVProgram to (item 1 of (programs where (start time > theTime) and (start time < theNextEyeTVProgramTime) and enabled = true))
                         set theNextEyeTVProgramTime to start time of theNextEyeTVProgram
                     on error
                         return
@@ -241,28 +241,29 @@ def updateNextProgramTimer(thedevice, thedeviceDict, thetimer, thevaluesDict):
     core.logger(traceLog = "Raw amount %s" % (theAmount))
     theAmount = theAmount.seconds/60 + theAmount.days*24*60 - int(thedeviceDict["PrepadTime"])
 
-    if thetimer is None:
-        # needs to create a timer device
-        core.logger(traceLog = "Creating a new timer")
-        thetimer = (indigo.device.create(protocol=indigo.kProtocol.Plugin,
-                 name = theName.encode('ascii', 'ignore'),
-                 description= theDescription.encode('ascii', 'ignore'),
-                 pluginId="com.perceptiveautomation.indigoplugin.timersandpesters",
-                 deviceTypeId="timer",
-                 props={'amount':theAmount, 'amountType':'minutes'},
-                 folder=thedevice.folderId))
-        indigo.activePlugin.timerPlugin.executeAction("startTimer", deviceId=thetimer.id)
+    if theAmount>0:
+        if thetimer is None:
+            # needs to create a timer device
+            core.logger(traceLog = "Creating a new timer")
+            thetimer = (indigo.device.create(protocol=indigo.kProtocol.Plugin,
+                     name = theName.encode('ascii', 'ignore'),
+                     description= theDescription.encode('ascii', 'ignore'),
+                     pluginId="com.perceptiveautomation.indigoplugin.timersandpesters",
+                     deviceTypeId="timer",
+                     props={'amount':theAmount, 'amountType':'minutes'},
+                     folder=thedevice.folderId))
+            indigo.activePlugin.timerPlugin.executeAction("startTimer", deviceId=thetimer.id)
 
-        # update device property
-        localprops = thedevice.pluginProps
-        localprops.update({"TimerDevice":thetimer.id})
-        thedevice.replacePluginPropsOnServer(localprops)
-        core.logger(msgLog = u'created new timer \"%s\" (id:%s) for %s minutes' % (theName,thetimer.id, theAmount))
-    else:
-        core.logger(traceLog = "Updating the timer")
-        thetimer.name = theName.encode('ascii', 'ignore')
-        thetimer.description = theDescription.encode('ascii', 'ignore')
-        thetimer.replaceOnServer()
-        indigo.activePlugin.timerPlugin.executeAction("setTimerStartValue", deviceId=thetimer.id, props={'amount':theAmount, 'amountType':'minutes'})
-        indigo.activePlugin.timerPlugin.executeAction("startTimer", deviceId=thetimer.id)
-        core.logger(msgLog = u'updated timer \"%s\" (id:%s) for %s minutes' % (theName,thetimer.id, theAmount))
+            # update device property
+            localprops = thedevice.pluginProps
+            localprops.update({"TimerDevice":thetimer.id})
+            thedevice.replacePluginPropsOnServer(localprops)
+            core.logger(msgLog = u'created new timer \"%s\" (id:%s) for %s minutes' % (theName,thetimer.id, theAmount))
+        else:
+            core.logger(traceLog = "Updating the timer")
+            thetimer.name = theName.encode('ascii', 'ignore')
+            thetimer.description = theDescription.encode('ascii', 'ignore')
+            thetimer.replaceOnServer()
+            indigo.activePlugin.timerPlugin.executeAction("setTimerStartValue", deviceId=thetimer.id, props={'amount':theAmount, 'amountType':'minutes'})
+            indigo.activePlugin.timerPlugin.executeAction("startTimer", deviceId=thetimer.id)
+            core.logger(msgLog = u'updated timer \"%s\" (id:%s) for %s minutes' % (theName,thetimer.id, theAmount))

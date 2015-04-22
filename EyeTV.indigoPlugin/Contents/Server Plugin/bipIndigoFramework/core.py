@@ -123,7 +123,7 @@ def updatestates(thedevice, thevaluesDict):
             logger(traceRaw = u"%s value : %s == %s" % (thekey, thedevice.states[thekey],thevalue))
 
     if len(updateDict)>0:
-        indigo.activePlugin.sleep(0.5)
+        indigo.activePlugin.sleep(0.2)
 
     logger(traceRaw = u"Updated Keys: Values   : %s" % (updateDict))
 
@@ -147,4 +147,70 @@ def specialimage(thedevice, thekey, thedict, theimagedict):
         else:
             logger(traceLog = u"device \"%s\" has automatic image for %s = %s" % (thedevice.name, thekey, thedict[thekey]))
             thedevice.updateStateImageOnServer(indigo.kStateImageSel.Auto)
+
+########################################
+def updatedeviceprops(thedevice, thevaluesDict):
+    """ Update device properties on server and log if changed
+        
+        Args:
+            thedevice: device object
+            thevaluesDict: python dictionnay of the states names and values
+        Returns:
+            Python dictionnary of the states names and values that have been changed
+        """
+    
+    updateDict = {}
+    
+    logger(traceRaw = u"Input Device Property Keys: Values   : %s" % (thevaluesDict))
+    localprops = thedevice.pluginProps
+
+    for thekey,thevalue in thevaluesDict.iteritems():
+        theactualvalue=strutf8(localprops[thekey])
+        thevalue=strutf8(thevalue)
+        
+        if theactualvalue.lower() != thevalue.lower() :
+            logger(traceRaw = u"%s value : %s <> %s" % (thekey, localprops[thekey],thevalue), msgLog=u'received "%s" device property %s update to %s' % (thedevice.name,thekey,thevalue))
+            localprops.update({thekey:thevalue})
+            updateDict[thekey]=thevalue
+            logger(traceRaw = u"%s value : %s == %s" % (thekey, localprops[thekey],thevalue))
+
+    if len(updateDict)>0:
+        thedevice.replacePluginPropsOnServer(localprops)
+        indigo.activePlugin.sleep(0.2)
+        
+        logger(traceRaw = u"Updated Device Property: Values   : %s" % (updateDict))
+    
+    return updateDict
+
+########################################
+def updatepluginprops(thevaluesDict):
+    """ Update plugin properties on server and log if changed
+        
+        Args:
+            theplugin: plugin object
+            thevaluesDict: python dictionnay of the states names and values
+        Returns:
+            Python dictionnary of the states names and values that have been changed
+        """
+    
+    updateDict = {}
+    
+    logger(traceRaw = u"Input Plugin Property Keys: Values   : %s" % (thevaluesDict))
+    
+    for thekey,thevalue in thevaluesDict.iteritems():
+        theactualvalue=strutf8(indigo.activePlugin.pluginPrefs[thekey])
+        thevalue=strutf8(thevalue)
+        
+        if theactualvalue.lower() != thevalue.lower() :
+            logger(traceRaw = u"%s value : %s <> %s" % (thekey, indigo.activePlugin.pluginPrefs[thekey],thevalue), msgLog=u'received plugin propserty %s update to %s' % (thekey,thevalue))
+            indigo.activePlugin.pluginPrefs[thekey] = thevalue
+            updateDict[thekey]=thevalue
+            logger(traceRaw = u"%s value : %s == %s" % (thekey, indigo.activePlugin.pluginPrefs[thekey],thevalue))
+
+    if len(updateDict)>0:
+        indigo.activePlugin.sleep(0.2)
+        
+        logger(traceRaw = u"Updated Plugin Property: Values   : %s" % (updateDict))
+    
+    return updateDict
 

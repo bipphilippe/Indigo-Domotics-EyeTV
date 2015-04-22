@@ -59,17 +59,19 @@ def sleepWake():
 class dialogTimer(object):
     """ Timer to be used in runConcurrentThread for dialogs that needs to be made less often that the runConcurrentThread pace
     """
-    def __init__(self, timername, interval):
+    def __init__(self, timername, interval, initialinterval=0):
         """ Constructor
 
             Args:
                 timername : name of the timer (for logging use)
                 interval: interval in seconds
+                initialinterval : first interval in seconds (ignored if 0)
             Returns:
                 dialogTimer class instance
         """
         self._timer     = None
         self.timername = timername
+        self.initialinterval = initialinterval
         self.interval   = interval
         self.timeEllapsed = True
         core.logger(traceLog = u"initiating dialog timer \"%s\" on a %s seconds pace" % (self.timername, interval))
@@ -82,8 +84,23 @@ class dialogTimer(object):
     def _run(self):
         core.logger(traceLog = u"time ellapsed for dialog timer \"%s\"" % (self.timername))
         self.timeEllapsed = True
-        self._timer = Timer(self.interval, self._run)
+        if self.initialinterval>0:
+            self._timer = Timer(self.initialinterval, self._run)
+            self.initialinterval=0
+        else:
+            self._timer = Timer(self.interval, self._run)
         self._timer.start()
+
+    def changeInterval(self, interval):
+        """ Change interval value - restart the timer to take the new value in account
+        
+        Args:
+            interval: interval in seconds
+        """
+        self.interval = interval
+        core.logger(traceLog = u"restarting with new timing value %s for dialog timer \"%s\"" % (interval, self.timername))
+        self._timer.cancel()
+        self._run()
 
     def doNow(self):
         """ Stop the current timing and set isTime to true
