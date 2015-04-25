@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>PluginVersion</key>
-	<string>1.0.2</string>
+	<string>1.1.0</string>
 	<key>ServerApiVersion</key>
 	<string>1.18</string>
 	<key>IwsApiVersion</key>
@@ -14,5 +14,12 @@
 	<string>net.bip-philippe.indigoplugin.eyetv</string>
 	<key>CFBundleVersion</key>
 	<string>1.0.0</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>http://forums.indigodomo.com/viewtopic.php?f=162&amp;t=13759</string>
+		</dict>
+	</array>
 </dict>
 </plist>

@@ -18,17 +18,17 @@
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.#
-
-
-    History
-    Rev 1.0.0 :   initial version
 """
 ####################################################################################
 
 import indigo
 import core
 
-_kDimmerRelayActionDict = {indigo.kDimmerRelayAction.AllLightsOff:'AllLightsOff',
+_kDimmerRelayActionDict = {indigo.kDeviceGeneralAction.Beep:'Beep',
+indigo.kDeviceGeneralAction.EnergyUpdate:'EnergyUpdate',
+indigo.kDeviceGeneralAction.EnergyReset:'EnergyReset',
+indigo.kDeviceGeneralAction.RequestStatus:'RequestStatus',
+indigo.kDimmerRelayAction.AllLightsOff:'AllLightsOff',
 indigo.kDimmerRelayAction.AllLightsOn:'AllLightsOn',
 indigo.kDimmerRelayAction.AllOff:'AllOff',
 indigo.kDimmerRelayAction.BrightenBy:'BrightenBy',
@@ -50,7 +50,7 @@ def startAction(thedevice, theaction):
     """
 
     theactionid = theaction.deviceAction
-    core.logger(traceLog = u"requesting device \"%s\" action %s " % (thedevice.name,_kDimmerRelayActionDict[theactionid]))
+    core.logger(traceLog = u"requesting device \"%s\" action %s" % (thedevice.name,_kDimmerRelayActionDict[theactionid]))
     # work on toggling
     if theactionid == indigo.kDimmerRelayAction.Toggle:
         if thedevice.states['onOffState']:
@@ -59,11 +59,11 @@ def startAction(thedevice, theaction):
             theactionid = indigo.kDimmerRelayAction.TurnOn
 
     # test if needed
-    if (theaction == indigo.kDimmerRelayAction.TurnOn) and (thedevice.states['onOffState']):
+    if (theactionid == indigo.kDimmerRelayAction.TurnOn) and (thedevice.states['onOffState']):
         core.logger(msgLog= u"device %s is already on" % (thedevice.name))
         return None
 
-    if (theaction == indigo.kDimmerRelayAction.TurnOff) and not(thedevice.states['onOffState']):
+    if (theactionid == indigo.kDimmerRelayAction.TurnOff) and not(thedevice.states['onOffState']):
         core.logger(msgLog = u"device %s is already off" % (thedevice.name))
         return None
 

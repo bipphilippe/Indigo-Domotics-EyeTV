@@ -35,6 +35,7 @@ def init():
     osascript.init()
     shellscript.init()
 
+
 ##########
 # Any App
 ########################
@@ -54,6 +55,7 @@ def getProcessData(thedevice, thevaluesDict):
         thevaluesDict["Status"]="unavailable"
 
     return (True,thevaluesDict)
+
 
 ##########
 # TurboHD App
@@ -95,6 +97,7 @@ def getTurboHDData(thedevice,thevaluesDict):
         return (True,thevaluesDict)
     else:
         return (False,thevaluesDict)
+
 
 ##########
 # EyeTV App
@@ -223,12 +226,15 @@ def getEyeTVNextProgramData(thedevice,thevaluesDict):
     else:
         return (False,thevaluesDict)
 
+
 def updateNextProgramTimer(thedevice, thedeviceDict, thetimer, thevaluesDict):
     """ Update time regarding Next Program Data
 
         Args:
             thedevice: current EyeTV device
-            thevaluesDict: dictionary of the status values so far
+            thedeviceDict: dictionary of the status values so far
+            thetimer: timer device
+            thevaluesDict: timer device status values dict
         Returns:
             success: True if success, False if not
     """
@@ -239,8 +245,9 @@ def updateNextProgramTimer(thedevice, thedeviceDict, thetimer, thevaluesDict):
     theDescription = thevaluesDict['Title'] + u'\n' + thevaluesDict['Episode'] + u'\n' + thevaluesDict['ChannelName'] +u'\n' + thevaluesDict['StartTime'] + u'\n' + thevaluesDict['Duration'] + u' min'
     theAmount = datetime.strptime(thevaluesDict['StartTimestamp'], '%Y-%m-%d %H:%M:%S') - datetime.now()
     core.logger(traceLog = "Raw amount %s" % (theAmount))
-    theAmount = theAmount.seconds/60 + theAmount.days*24*60 - int(thedeviceDict["PrepadTime"])
-
+    # wake-up 5 minutes before recording start
+    theAmount = theAmount.seconds/60 + theAmount.days*24*60 - int(thedeviceDict["PrepadTime"]) - 5
+    
     if theAmount>0:
         if thetimer is None:
             # needs to create a timer device
@@ -267,3 +274,21 @@ def updateNextProgramTimer(thedevice, thedeviceDict, thetimer, thevaluesDict):
             indigo.activePlugin.timerPlugin.executeAction("setTimerStartValue", deviceId=thetimer.id, props={'amount':theAmount, 'amountType':'minutes'})
             indigo.activePlugin.timerPlugin.executeAction("startTimer", deviceId=thetimer.id)
             core.logger(msgLog = u'updated timer \"%s\" (id:%s) for %s minutes' % (theName,thetimer.id, theAmount))
+
+
+def checkNextProgramTimer(thetimer, StartTimestamp, PrepadTime):
+    """ Check time regarding Next Program Data
+        
+        Args:
+            StartTimestamp: time formated %Y-%m-%d %H:%M:%S
+    """
+    core.logger(traceLog = "Checking timer data")
+    
+    # wake-up 5 minutes before recording start
+    theAmount = datetime.strptime(StartTimestamp, '%Y-%m-%d %H:%M:%S') - datetime.now()
+    core.logger(traceLog = "Raw amount %s" % (theAmount))
+    theAmount = theAmount.seconds/60 + theAmount.days*24*60 - int(PrepadTime) - 5
+    indigo.activePlugin.timerPlugin.executeAction("setTimerStartValue", deviceId=thetimer.id, props={'amount':theAmount, 'amountType':'minutes'})
+    indigo.activePlugin.timerPlugin.executeAction("startTimer", deviceId=thetimer.id)
+    core.logger(msgLog = u'updated timer \"%s\" (id:%s) for %s minutes' % (thetimer.name, thetimer.id, theAmount))
+

@@ -18,10 +18,6 @@
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.#
-
-
-    History
-    Rev 1.0.0 :   initial version
 """
 ####################################################################################
 
@@ -57,7 +53,7 @@ def run(pscript, rule=None, akeys=None):
             or None if error
     """
 
-    core.logger(traceRaw = u"going to call shell %s" % (pscript), traceLog = u"going to call shell %s..." % (pscript[:16]))
+    core.logger(traceRaw = u"going to call shell %s" % (pscript), traceLog = u"going to call shell %s..." % (pscript[:64]))
 
     p = subprocess.Popen(pscript,
                            stdout=subprocess.PIPE,
@@ -90,10 +86,14 @@ def run(pscript, rule=None, akeys=None):
     else:
         # split using regex
         returnvalue = {}
-        for thekey,thevalue in zip(akeys,rule.match(pvalues).groups()):
-            returnvalue[thekey] = core.strutf8(thevalue.strip())
+        try:
+            for thekey,thevalue in zip(akeys,rule.match(pvalues).groups()):
+                returnvalue[thekey] = core.strutf8(thevalue.strip())
+        except:
+            for thekey in akeys:
+                returnvalue[thekey]=''
 
-    core.logger(traceRaw = u"returned from shell: %s" % returnvalue, traceLog = u"returned from shell %s..." % (pscript[:16]))
+    core.logger(traceRaw = u"returned from shell: %s" % returnvalue, traceLog = u"returned from shell %s..." % (pscript[:64]))
 
     return returnvalue
 

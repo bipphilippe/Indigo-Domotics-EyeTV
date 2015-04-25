@@ -21,7 +21,24 @@
 
 
     History
-    Rev 1.0.0 :   initial version
+    =======
+    Rev 1.0.0 : Initial version - 1st April 2015
+    Rev 1.0.1 : Correction of non-critical bugs occurring only on first install - 1st April 2015
+                 - cosmetic bug on Turbo.264 HD device name : corrected
+                 - non-critical error on debug flag when starting the plugin for the first time : corrected
+                 - non-critical error on plugin property when creating the first plugin : corrected
+    Rev 1.0.2 : Bug correction - 22 april 2015
+                Included bug corrections :
+                 - more accurate ps command use
+                 - next record timer no more generated during prepad time
+                Framework update
+    Rev 1.1.0 : Enhancements - 25 april 2005
+                 - add a "about" menu
+                 - new log management, less verbose
+                 - manages the Indigo Timer time slip
+                 - manages the "Enable Indigo Communication" flag
+                Some bugs corrections, including :
+                 - includes a 5 minutes margin to launch EyeTV before EyeTV Helper
 """
 ####################################################################################
 
@@ -39,8 +56,8 @@ class Plugin(indigo.PluginBase):
     ########################################
     def __init__(self, pluginId, pluginDisplayName, pluginVersion, pluginPrefs):
         indigo.PluginBase.__init__(self, pluginId, pluginDisplayName, pluginVersion, pluginPrefs)
-        self.debugraw = False
         self.debug = False
+        self.logLevel = 1
 
     def __del__(self):
         indigo.PluginBase.__del__(self)
@@ -94,6 +111,8 @@ class Plugin(indigo.PluginBase):
     def runConcurrentThread(self):
         core.logger(traceLog = u"runConcurrentThread initiated")
         nextProgramCheck = corethread.dialogTimer("Next program data check",300)
+        timerCheck = corethread.dialogTimer("Next program timer check",3600,150)
+        
         try:
             while True:
                 corethread.sleepWake()
@@ -129,8 +148,8 @@ class Plugin(indigo.PluginBase):
                         core.specialimage(thedevice, "isRecording", theupdatesDict, {"true":indigo.kStateImageSel.SensorTripped})
 
                         # "next recording" timer
-                        if self.timerPluginEnabled and (thevaluesDict.setdefault("Status","error") not in ("unavailable","error")) :
-                            # do not do it if error if previous steps
+                        if self.timerPluginEnabled:
+                            # check if an update of the values are needed
                             try:
                                 # test if the timer exists
                                 thetimer=indigo.devices[thedevice.pluginProps["TimerDevice"]]
@@ -141,18 +160,23 @@ class Plugin(indigo.PluginBase):
                             else:
                                 if thetimer.states["timerStatus"] != "active":
                                     nextProgramCheck.doNow()
-
-                            if theupdatesDict.setdefault("isRecording",False):
-                                nextProgramCheck.doNow()
-
-                            if nextProgramCheck.isTime():
-                                (success, thevaluesTimerDict) = interface.getEyeTVNextProgramData(thedevice,{})
-                                if success:
-                                    theupdatesTimerDict = core.updatestates(thedevice, thevaluesTimerDict)
-                                    if (len(theupdatesTimerDict)>0) or (thetimer is None) or ("PrepadTime" in theupdatesDict) or (thetimer.states["timerStatus"] != "active"):
-                                        success = interface.updateNextProgramTimer(thedevice, thevaluesDict, thetimer, thevaluesTimerDict)
-                                else:
+                            if (thevaluesDict.setdefault("Status","error") not in ("unavailable","error")) :
+                                # do not do it if error if previous steps
+                                if theupdatesDict.setdefault("isRecording",False):
                                     nextProgramCheck.doNow()
+
+                                if nextProgramCheck.isTime():
+                                    (success, thevaluesTimerDict) = interface.getEyeTVNextProgramData(thedevice,{})
+                                    if success:
+                                        theupdatesTimerDict = core.updatestates(thedevice, thevaluesTimerDict)
+                                        if (len(theupdatesTimerDict)>0) or (thetimer is None) or ("PrepadTime" in theupdatesDict):
+                                            success = interface.updateNextProgramTimer(thedevice, thevaluesDict, thetimer, thevaluesTimerDict)
+                                    else:
+                                        nextProgramCheck.doNow()
+                
+                            # regular check of timer (because of lack of precision)
+                            if (thetimer.states["timerStatus"] == "active") and (timerCheck.isTime()):
+                                interface.checkNextProgramTimer(thetimer, thedevice.states['StartTimestamp'], thedevice.states['PrepadTime'])
 
                 # wait
                 corethread.sleepNext(5) # in seconds
