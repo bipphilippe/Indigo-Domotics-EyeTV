@@ -122,7 +122,7 @@ class Plugin(indigo.PluginBase):
                     ##########
                     # TurboHD App
                     ########################
-                    if (thedevice.deviceTypeId =="bip.etv.turbohdapp") and thedevice.configured:
+                    if (thedevice.deviceTypeId =="bip.etv.turbohdapp") and thedevice.configured and thedevice.enabled:
                         # TurboHD states
                         (success,thevaluesDict) = interface.getProcessData(thedevice, thevaluesDict)
                         if thevaluesDict.setdefault("Status","other") != "unavailable":
@@ -136,7 +136,7 @@ class Plugin(indigo.PluginBase):
                     ##########
                     # EyeTV App
                     ########################
-                    elif (thedevice.deviceTypeId =="bip.etv.eyetvapp") and thedevice.configured:
+                    elif (thedevice.deviceTypeId =="bip.etv.eyetvapp") and thedevice.configured and thedevice.enabled:
                         # EyeTV states
                         (success,thevaluesDict) = interface.getProcessData(thedevice, thevaluesDict)
                         if thevaluesDict.setdefault("Status","other") != "unavailable":
