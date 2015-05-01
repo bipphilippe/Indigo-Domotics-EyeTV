@@ -49,10 +49,10 @@ def getProcessData(thedevice, thevaluesDict):
             success: True if success, False if not
             thevaluesDict updated with new data if success, equals to the input if not
     """
-    pslist = shellscript.run(u"ps -awxc -opid,comm | grep '%s$'" % (thedevice.pluginProps['ApplicationID'][:-4]),[(0,6)],['ProcessID'])
+    pslist = shellscript.run(u"ps -awxc -opid,comm | grep '%s$'" % (thedevice.pluginProps[u'ApplicationID'][:-4]),[(0,6)],[u'ProcessID'])
 
-    if pslist['ProcessID']=='':
-        thevaluesDict["Status"]="unavailable"
+    if pslist[u'ProcessID']=='':
+        thevaluesDict[u'Status']=u'unavailable'
 
     return (True,thevaluesDict)
 
@@ -90,7 +90,7 @@ def getTurboHDData(thedevice,thevaluesDict):
             end timeout
             set AppleScript's text item delimiters to saveTID
         end tell
-        return toreturn''',["isEncoding", "isTurboHardwareIn", "lastError", "Status"])
+        return toreturn''',[u'isEncoding', u'isTurboHardwareIn', u'lastError', u'Status'])
     
     if theresult is not None :
         thevaluesDict.update(theresult),
@@ -146,7 +146,7 @@ def getEyeTVData(thedevice,thevaluesDict):
            end timeout
            set AppleScript's text item delimiters to saveTID
         end tell
-        return toreturn''',["AlertMenu", "CurrentChannel", "isTurboHardwareIn", "isBusy", "isCompacting", "isExporting", "isRecording", "isSavingClip", "isPlaying", "PrepadTime", "PostpadTime", "PlaybackVolume", "isMutedVolume", "isServerMode","Status"], 20)
+        return toreturn''',[u'AlertMenu', u'CurrentChannel', u'isTurboHardwareIn', u'isBusy', u'isCompacting', u'isExporting', u'isRecording', u'isSavingClip', u'isPlaying', u'PrepadTime', u'PostpadTime', u'PlaybackVolume', u'isMutedVolume', u'isServerMode',u'Status'], 20)
 
     if theresult is not None :
         thevaluesDict.update(theresult),
@@ -218,7 +218,7 @@ def getEyeTVNextProgramData(thedevice,thevaluesDict):
             " " & text -2 thru -1 of ("00" & (hours of mydate)) & ¬
             ":" & text -2 thru -1 of ("00" & (minutes of mydate)) & ¬
             ":" & text -2 thru -1 of ("00" & (seconds of mydate))
-        end pydate''', ["UniqueID", "Title", "Episode", "ChannelName", "Duration", "StartTime", "StartTimestamp"])
+        end pydate''', [u'UniqueID', u'Title', u'Episode', u'ChannelName', u'Duration', u'StartTime', u'StartTimestamp'])
 
     if theresult is not None :
         thevaluesDict.update(theresult) ,
@@ -238,42 +238,42 @@ def updateNextProgramTimer(thedevice, thedeviceDict, thetimer, thevaluesDict):
         Returns:
             success: True if success, False if not
     """
-    core.logger(traceLog = "Working on timer data")
+    core.logger(traceLog = u'Working on timer data')
 
     # timer data
-    theName = thevaluesDict['Title'] + u' - ' + thevaluesDict['Episode'] + u' ('+thevaluesDict['ChannelName'] + u')'
-    theDescription = thevaluesDict['Title'] + u'\n' + thevaluesDict['Episode'] + u'\n' + thevaluesDict['ChannelName'] +u'\n' + thevaluesDict['StartTime'] + u'\n' + thevaluesDict['Duration'] + u' min'
-    theAmount = datetime.strptime(thevaluesDict['StartTimestamp'], '%Y-%m-%d %H:%M:%S') - datetime.now()
-    core.logger(traceLog = "Raw amount %s" % (theAmount))
+    theName = thevaluesDict[u'Title'] + u' - ' + thevaluesDict[u'Episode'] + u' ('+thevaluesDict[u'ChannelName'] + u')'
+    theDescription = thevaluesDict[u'Title'] + u'\n' + thevaluesDict[u'Episode'] + u'\n' + thevaluesDict[u'ChannelName'] +u'\n' + thevaluesDict[u'StartTime'] + u'\n' + thevaluesDict[u'Duration'] + u' min'
+    theAmount = datetime.strptime(thevaluesDict[u'StartTimestamp'], u'%Y-%m-%d %H:%M:%S') - datetime.now()
+    core.logger(traceLog = u'Raw amount %s' % (theAmount))
     # wake-up 5 minutes before recording start
-    theAmount = theAmount.seconds/60 + theAmount.days*24*60 - int(thedeviceDict["PrepadTime"]) - 5
+    theAmount = theAmount.seconds/60 + theAmount.days*24*60 - int(thedeviceDict[u'PrepadTime']) - 5
     
     if theAmount>0:
         if thetimer is None:
             # needs to create a timer device
-            core.logger(traceLog = "Creating a new timer")
+            core.logger(traceLog = u'Creating a new timer')
             thetimer = (indigo.device.create(protocol=indigo.kProtocol.Plugin,
                      name = theName.encode('ascii', 'ignore'),
                      description= theDescription.encode('ascii', 'ignore'),
-                     pluginId="com.perceptiveautomation.indigoplugin.timersandpesters",
-                     deviceTypeId="timer",
-                     props={'amount':theAmount, 'amountType':'minutes'},
+                     pluginId=u'com.perceptiveautomation.indigoplugin.timersandpesters',
+                     deviceTypeId=u'timer',
+                     props={u'amount':theAmount, u'amountType':u'minutes'},
                      folder=thedevice.folderId))
-            indigo.activePlugin.timerPlugin.executeAction("startTimer", deviceId=thetimer.id)
+            indigo.activePlugin.timerPlugin.executeAction(u'startTimer', deviceId=thetimer.id)
 
             # update device property
             localprops = thedevice.pluginProps
-            localprops.update({"TimerDevice":thetimer.id})
+            localprops.update({u'TimerDevice':thetimer.id})
             thedevice.replacePluginPropsOnServer(localprops)
-            core.logger(msgLog = u'created new timer \"%s\" (id:%s) for %s minutes' % (theName,thetimer.id, theAmount))
+            core.logger(msgLog = u'created new timer "%s" (id:%s) for %s minutes' % (theName,thetimer.id, theAmount))
         else:
-            core.logger(traceLog = "Updating the timer")
+            core.logger(traceLog = u'Updating the timer')
             thetimer.name = theName.encode('ascii', 'ignore')
             thetimer.description = theDescription.encode('ascii', 'ignore')
             thetimer.replaceOnServer()
-            indigo.activePlugin.timerPlugin.executeAction("setTimerStartValue", deviceId=thetimer.id, props={'amount':theAmount, 'amountType':'minutes'})
-            indigo.activePlugin.timerPlugin.executeAction("startTimer", deviceId=thetimer.id)
-            core.logger(msgLog = u'updated timer \"%s\" (id:%s) for %s minutes' % (theName,thetimer.id, theAmount))
+            indigo.activePlugin.timerPlugin.executeAction(u'setTimerStartValue', deviceId=thetimer.id, props={u'amount':theAmount, u'amountType':u'minutes'})
+            indigo.activePlugin.timerPlugin.executeAction(u'startTimer', deviceId=thetimer.id)
+            core.logger(msgLog = u'updated timer "%s" (id:%s) for %s minutes' % (theName,thetimer.id, theAmount))
 
 
 def checkNextProgramTimer(thetimer, StartTimestamp, PrepadTime):
@@ -282,13 +282,13 @@ def checkNextProgramTimer(thetimer, StartTimestamp, PrepadTime):
         Args:
             StartTimestamp: time formated %Y-%m-%d %H:%M:%S
     """
-    core.logger(traceLog = "Checking timer data")
+    core.logger(traceLog = u'Checking timer data')
     
     # wake-up 5 minutes before recording start
     theAmount = datetime.strptime(StartTimestamp, '%Y-%m-%d %H:%M:%S') - datetime.now()
-    core.logger(traceLog = "Raw amount %s" % (theAmount))
+    core.logger(traceLog = u'Raw amount %s' % (theAmount))
     theAmount = theAmount.seconds/60 + theAmount.days*24*60 - int(PrepadTime) - 5
-    indigo.activePlugin.timerPlugin.executeAction("setTimerStartValue", deviceId=thetimer.id, props={'amount':theAmount, 'amountType':'minutes'})
-    indigo.activePlugin.timerPlugin.executeAction("startTimer", deviceId=thetimer.id)
-    core.logger(msgLog = u'updated timer \"%s\" (id:%s) for %s minutes' % (thetimer.name, thetimer.id, theAmount))
+    indigo.activePlugin.timerPlugin.executeAction(u'setTimerStartValue', deviceId=thetimer.id, props={u'amount':theAmount, u'amountType':u'minutes'})
+    indigo.activePlugin.timerPlugin.executeAction(u'startTimer', deviceId=thetimer.id)
+    core.logger(msgLog = u'updated timer "%s" (id:%s) for %s minutes' % (thetimer.name, thetimer.id, theAmount))
 

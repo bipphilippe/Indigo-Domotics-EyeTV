@@ -117,21 +117,22 @@ def updatestates(thedevice, thevaluesDict):
 
     updateDict = {}
 
-    logger(traceRaw = u"Input Keys: Values   : %s" % (thevaluesDict))
+    logger(traceRaw = u'"%s" input keys values : %s' % (thedevice.name, thevaluesDict))
     for thekey,thevalue in thevaluesDict.iteritems():
         theactualvalue=strutf8(thedevice.states[thekey])
         thevalue=strutf8(thevalue)
 
-        if theactualvalue.lower() != thevalue.lower() :
-            logger(traceRaw = u"%s value : %s <> %s" % (thekey, thedevice.states[thekey],thevalue), msgLog=u'received "%s" status %s update to %s' % (thedevice.name,thekey,thevalue), isMain=(thedevice.displayStateId == thekey))
+        if theactualvalue != thevalue :
+            logger(traceRaw = u'"%s" %s value : %s != %s' % (thedevice.name, thekey, thedevice.states[thekey],thevalue), msgLog=u'received "%s" status %s update to %s' % (thedevice.name, thekey, thevalue), isMain=(thedevice.displayStateId == thekey))
             thedevice.updateStateOnServer(key=thekey, value=thevalue)
             updateDict[thekey]=thevalue
-            logger(traceRaw = u"%s value : %s == %s" % (thekey, thedevice.states[thekey],thevalue))
+        else:
+            logger(traceRaw = u'"%s" %s value : %s == %s' % (thedevice.name, thekey, thedevice.states[thekey],thevalue))
 
     if len(updateDict)>0:
         indigo.activePlugin.sleep(0.2)
 
-    logger(traceRaw = u"Updated Keys: Values   : %s" % (updateDict))
+    logger(traceRaw = u'"%s" updated keys values   : %s' % (thedevice.name, updateDict))
 
     return updateDict
 
@@ -149,10 +150,10 @@ def specialimage(thedevice, thekey, thedict, theimagedict):
 
     if thekey in thedict:
         if thedict[thekey] in theimagedict:
-            logger(traceLog = u"device \"%s\" has special image for %s = %s" % (thedevice.name, thekey, thedict[thekey]))
+            logger(traceLog = u'device "%s" has special image for %s = %s' % (thedevice.name, thekey, thedict[thekey]))
             thedevice.updateStateImageOnServer(theimagedict[thedict[thekey]])
         else:
-            logger(traceLog = u"device \"%s\" has automatic image for %s = %s" % (thedevice.name, thekey, thedict[thekey]))
+            logger(traceLog = u'device "%s" has automatic image for %s = %s' % (thedevice.name, thekey, thedict[thekey]))
             thedevice.updateStateImageOnServer(indigo.kStateImageSel.Auto)
 
 
@@ -176,17 +177,17 @@ def updatedeviceprops(thedevice, thevaluesDict):
         theactualvalue=strutf8(localprops[thekey])
         thevalue=strutf8(thevalue)
         
-        if theactualvalue.lower() != thevalue.lower() :
-            logger(traceRaw = u"%s value : %s <> %s" % (thekey, localprops[thekey],thevalue), msgLog=u'received "%s" device property %s update to %s' % (thedevice.name,thekey,thevalue))
+        if theactualvalue != thevalue :
+            logger(traceRaw = u'"%s" value : %s <> %s' % (thekey, localprops[thekey],thevalue), msgLog=u'received "%s" device property %s update to %s' % (thedevice.name,thekey,thevalue))
             localprops.update({thekey:thevalue})
             updateDict[thekey]=thevalue
-            logger(traceRaw = u"%s value : %s == %s" % (thekey, localprops[thekey],thevalue))
+            logger(traceRaw = u'"%s" value : %s == %s' % (thekey, localprops[thekey],thevalue))
 
     if len(updateDict)>0:
         thedevice.replacePluginPropsOnServer(localprops)
         indigo.activePlugin.sleep(0.2)
         
-        logger(traceRaw = u"Updated Device Property: Values   : %s" % (updateDict))
+        logger(traceRaw = u'Updated Device "%s" property Values   : %s' % (thedevice.name, updateDict))
     
     return updateDict
 
@@ -204,22 +205,22 @@ def updatepluginprops(thevaluesDict):
     
     updateDict = {}
     
-    logger(traceRaw = u"Input Plugin Property Keys: Values   : %s" % (thevaluesDict))
+    logger(traceRaw = u'Input Plugin Property Keys: Values   : %s' % (thevaluesDict))
     
     for thekey,thevalue in thevaluesDict.iteritems():
         theactualvalue=strutf8(indigo.activePlugin.pluginPrefs[thekey])
         thevalue=strutf8(thevalue)
         
-        if theactualvalue.lower() != thevalue.lower() :
-            logger(traceRaw = u"%s value : %s <> %s" % (thekey, indigo.activePlugin.pluginPrefs[thekey],thevalue), msgLog=u'received plugin propserty %s update to %s' % (thekey,thevalue))
+        if theactualvalue != thevalue:
+            logger(traceRaw = u'"%s" value : %s != %s' % (thekey, indigo.activePlugin.pluginPrefs[thekey],thevalue), msgLog=u'received plugin propserty %s update to %s' % (thekey,thevalue))
             indigo.activePlugin.pluginPrefs[thekey] = thevalue
             updateDict[thekey]=thevalue
-            logger(traceRaw = u"%s value : %s == %s" % (thekey, indigo.activePlugin.pluginPrefs[thekey],thevalue))
+            logger(traceRaw = u'"%s" value : %s == %s' % (thekey, indigo.activePlugin.pluginPrefs[thekey],thevalue))
 
     if len(updateDict)>0:
         indigo.activePlugin.sleep(0.2)
         
-        logger(traceRaw = u"Updated Plugin Property: Values   : %s" % (updateDict))
+        logger(traceRaw = u'Updated Plugin property values   : %s' % (updateDict))
     
     return updateDict
 
